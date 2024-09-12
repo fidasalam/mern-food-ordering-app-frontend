@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signInWithPopup } from 'firebase/auth';
-import { auth } from './firebase/firebase
+import { GoogleAuthProvider, signInWithRedirect, getRedirectResult, signInWithPopup } from 'firebase/auth';
+import { auth } from './firebase/firebase'
 
 const provider = new GoogleAuthProvider();
 
