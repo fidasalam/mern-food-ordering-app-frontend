@@ -1,19 +1,18 @@
-// src/firebase.ts
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
-// Your web app's Firebase configuration
+// Firebase configuration using environment variables
 const firebaseConfig = {
-    apiKey: "AIzaSyAQA1me0o0GWTocnIF9aWRsL1Og0L--XbU",
-    authDomain: "food-app-5ebe6.firebaseapp.com",
-    projectId: "food-app-5ebe6",
-    storageBucket: "food-app-5ebe6.appspot.com",
-    messagingSenderId: "910575210922",
-    appId: "1:910575210922:web:3f1ac93f1a5d3e1b941bd3"
-  };
+    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_FIREBASE_APP_ID,
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-export {app, auth };
+export { app, auth };
