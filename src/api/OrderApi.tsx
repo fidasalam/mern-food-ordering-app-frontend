@@ -1,15 +1,36 @@
 import { Order } from "@/types";
-import { useAuth0 } from "@auth0/auth0-react";
+import { getAuth } from "firebase/auth";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "sonner";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+
+
+const getAuthToken = async (): Promise<string> => {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error("User is not authenticated");
+    }
+
+    // Ensure the token is refreshed if it's expired
+    const token = await user.getIdToken(true);
+
+    return token;
+  } catch (error) {
+    console.error("Failed to get auth token:", error);
+    throw error;
+  }
+}
+
 export const useGetMyOrders = () => {
-  const { getAccessTokenSilently } = useAuth0();
+  
 
   const getMyOrdersRequest = async (): Promise<Order[]> => {
-    const accessToken = await getAccessTokenSilently();
+    const accessToken = await getAuthToken();
 
     const response = await fetch(`${API_BASE_URL}/api/order`, {
       headers: {
@@ -51,12 +72,12 @@ type CheckoutSessionRequest = {
 };
 
 export const useCreateCheckoutSession = () => {
-  const { getAccessTokenSilently } = useAuth0();
+  
 
   const createCheckoutSessionRequest = async (
     checkoutSessionRequest: CheckoutSessionRequest
   ) => {
-    const accessToken = await getAccessTokenSilently();
+    const accessToken = await getAuthToken();
 
     const response = await fetch(
       `${API_BASE_URL}/api/order/checkout/create-checkout-session`,

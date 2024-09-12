@@ -1,18 +1,31 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import { Navigate, Outlet } from "react-router-dom";
+// src/auth/ProtectedRoute.tsx
+import React, { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { auth } from '../firebase/firebase'; // Adjust the path as needed
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 
-const ProtectedRoute = () => {
-  const { isAuthenticated, isLoading } = useAuth0();
+interface ProtectedRouteProps {
+  element: React.ReactElement;
+}
 
-  if (isLoading) {
-    return null;
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser: FirebaseUser | null) => {
+      setIsAuthenticated(!!currentUser);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
-  if (isAuthenticated) {
-    return <Outlet />;
-  }
-
-  return <Navigate to="/" replace />;
+  return isAuthenticated ? element : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;

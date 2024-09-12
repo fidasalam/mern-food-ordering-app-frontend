@@ -1,15 +1,34 @@
 import { User } from "@/types";
-import { useAuth0 } from "@auth0/auth0-react";
+import { getAuth } from "firebase/auth";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "sonner";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const useGetMyUser = () => {
-  const { getAccessTokenSilently } = useAuth0();
 
+
+const getAuthToken = async (): Promise<string> => {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error("User is not authenticated");
+    }
+
+    // Ensure the token is refreshed if it's expired
+    const token = await user.getIdToken(true);
+
+    return token;
+  } catch (error) {
+    console.error("Failed to get auth token:", error);
+    throw error;
+  }
+}
+
+export const useGetMyUser = () => {
   const getMyUserRequest = async (): Promise<User> => {
-    const accessToken = await getAccessTokenSilently();
+    const accessToken = await getAuthToken();
 
     const response = await fetch(`${API_BASE_URL}/api/my/user`, {
       method: "GET",
@@ -45,10 +64,8 @@ type CreateUserRequest = {
 };
 
 export const useCreateMyUser = () => {
-  const { getAccessTokenSilently } = useAuth0();
-
   const createMyUserRequest = async (user: CreateUserRequest) => {
-    const accessToken = await getAccessTokenSilently();
+    const accessToken = await getAuthToken();
     const response = await fetch(`${API_BASE_URL}/api/my/user`, {
       method: "POST",
       headers: {
@@ -57,6 +74,10 @@ export const useCreateMyUser = () => {
       },
       body: JSON.stringify(user),
     });
+
+    console.log("Response Status:", response.status);
+    const responseBody = await response.json();
+    console.log("Response Body:", responseBody);
 
     if (!response.ok) {
       throw new Error("Failed to create user");
@@ -86,10 +107,8 @@ type UpdateMyUserRequest = {
 };
 
 export const useUpdateMyUser = () => {
-  const { getAccessTokenSilently } = useAuth0();
-
   const updateMyUserRequest = async (formData: UpdateMyUserRequest) => {
-    const accessToken = await getAccessTokenSilently();
+    const accessToken = await getAuthToken();
 
     const response = await fetch(`${API_BASE_URL}/api/my/user`, {
       method: "PUT",
@@ -103,6 +122,7 @@ export const useUpdateMyUser = () => {
     if (!response.ok) {
       throw new Error("Failed to update user");
     }
+    
 
     return response.json();
   };

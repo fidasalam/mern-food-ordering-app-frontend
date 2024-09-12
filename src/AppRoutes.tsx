@@ -1,7 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./layouts/layout";
 import HomePage from "./pages/HomePage";
-import AuthCallbackPage from "./pages/AuthCallbackPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import ManageRestaurantPage from "./pages/ManageRestaurantPage";
@@ -20,7 +19,7 @@ const AppRoutes = () => {
           </Layout>
         }
       />
-      <Route path="/auth-callback" element={<AuthCallbackPage />} />
+
       <Route
         path="/search/:city"
         element={
@@ -37,7 +36,7 @@ const AppRoutes = () => {
           </Layout>
         }
       />
-      <Route element={<ProtectedRoute />}>
+      {/* <Route element={<ProtectedRoute />}>
         <Route
           path="/order-status"
           element={
@@ -62,7 +61,44 @@ const AppRoutes = () => {
             </Layout>
           }
         />
-      </Route>
+      </Route> */}
+      <Route
+        path="/order-status"
+        element={
+          <ProtectedRoute
+            element={
+              <Layout>
+                <OrderStatusPage />
+              </Layout>
+            }
+          />
+        }
+      />
+
+      <Route
+        path="/user-profile"
+        element={
+          <ProtectedRoute
+            element={
+              <Layout>
+                <UserProfilePage />
+              </Layout>
+            }
+          />
+        }
+      />
+      <Route
+        path="/manage-restaurant"
+        element={
+          <ProtectedRoute
+            element={
+              <Layout>
+                <ManageRestaurantPage />
+              </Layout>
+            }
+          />
+        }
+      />
 
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

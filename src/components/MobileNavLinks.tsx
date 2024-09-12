@@ -1,9 +1,23 @@
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
-import { useAuth0 } from "@auth0/auth0-react";
+import { auth } from "../firebase/firebase"
+import { signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const MobileNavLinks = () => {
-  const { logout } = useAuth0();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("User signed out");
+        navigate("/"); 
+      })
+      .catch((error) => {
+        console.error("Error signing out: ", error);
+      });
+  };
+
   return (
     <>
       <Link
@@ -25,7 +39,7 @@ const MobileNavLinks = () => {
         User Profile
       </Link>
       <Button
-        onClick={() => logout()}
+        onClick={handleLogout}
         className="flex items-center px-3 font-bold hover:bg-gray-500"
       >
         Log Out
